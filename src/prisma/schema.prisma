@@ -10,5 +10,34 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:password@172.27.224.1:5432/postgres?schema=public"
+}
+
+model Comprador {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  email     String    @unique
+  celular   String
+  cep       String
+  pagamento String
+  carrinho  Carrinho?
+}
+
+model Carrinho {
+  id          Int       @id @default(autoincrement())
+  criadoEm    DateTime  @default(now())
+  produtos    Produto[]
+  comprador   Comprador @relation(fields: [compradorId], references: [id])
+  compradorId Int       @unique
+}
+
+model Produto {
+  id         Int      @id @default(autoincrement())
+  titulo     String
+  categoria  String?
+  preco      Float
+  desconto   Float
+  disponivel Boolean  @default(true)
+  carrinho   Carrinho @relation(fields: [carrinhoId], references: [id])
+  carrinhoId Int
 }
